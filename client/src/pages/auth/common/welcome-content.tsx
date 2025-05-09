@@ -7,7 +7,7 @@ function WelcomeContent() {
           Badawy-Events
         </h1>
         <p className="text-gray-300 text-sm mt-4">
-          Welcome to Badawy-Events! Let's make every moment memorable together!
+          Let's make every moment memorable together!
         </p>
       </div>
     </div>
