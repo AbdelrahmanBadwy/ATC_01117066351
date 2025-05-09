@@ -1,8 +1,21 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ThemeProvider from "./theme";
+import LoginPage from "./pages/auth/login";
+import RegisterPage from "./pages/auth/register";
+import HomePage from "./pages/private/home";
+
 function App() {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">HomePage</h1>
-    </div>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/home" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
