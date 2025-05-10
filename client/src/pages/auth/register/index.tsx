@@ -1,9 +1,29 @@
 import WelcomeContent from "../common/welcome-content";
-import { Form, Input, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Form, Input, Button, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../../../api-services/users-service";
+import { useState } from "react";
 function RegisterPage() {
-  const onFinish = (values: never) => {
-    console.log("Received values of form: ", values);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const onFinish = async (values: never) => {
+    try {
+      setLoading(true);
+      const response = await registerUser(values);
+      if (response) {
+        message.success(response);
+        // Redirect to login page
+        navigate("/login");
+      } else {
+        message.error("Registration failed: No response from server");
+      }
+    } catch (error: any) {
+      message.error(
+        error.response?.data.message || error.message || "Registration failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
@@ -48,7 +68,7 @@ function RegisterPage() {
             >
               <Input.Password placeholder="Enter your password" />
             </Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Register
             </Button>
             <Link to="/login">Already have an account? Login</Link>
