@@ -22,7 +22,7 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="p-5">
+    <div className="">
       <h1 className="text-2xl font-bold">Home Page</h1>
       <div className="mt-4">
         {user ? (
