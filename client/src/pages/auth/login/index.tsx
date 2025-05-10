@@ -1,9 +1,29 @@
 import WelcomeContent from "../common/welcome-content";
-import { Form, Input, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Form, Input, Button, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../../api-services/users-service";
+import { useState } from "react";
+import Cookies from "js-cookie";
 function LoginPage() {
-  const onFinish = (values: never) => {
-    console.log("Received values of form: ", values);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const onFinish = async (values: never) => {
+    try {
+      setLoading(true);
+      const response = await loginUser(values);
+      message.success(response.message);
+      // store the token in cookies
+      Cookies.set("token", response.token, { expires: 7 }); // expires in 7 days
+
+      // redirect to home page
+      navigate("/");
+    } catch (error: any) {
+      message.error(
+        error.response?.data.message || error.message || "Login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
@@ -41,7 +61,7 @@ function LoginPage() {
             >
               <Input.Password placeholder="Enter your password" />
             </Form.Item>
-            <Button type="primary" htmlType="submit" block>
+            <Button type="primary" htmlType="submit" block loading={loading}>
               Login
             </Button>
             <Link to="/register">Don't have an account? Register</Link>
