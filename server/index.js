@@ -6,6 +6,7 @@ const { connectDB } = require("./config/db-config");
 const mongoose = require("mongoose");
 //routers
 const userRouter = require("./routes/users-routes");
+const modelRouter = require("./routes/model-routes");
 const app = express();
 
 app.use(
@@ -32,6 +33,7 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/users", userRouter);
+app.use("/api/model", modelRouter);
 
 const PORT = process.env.PORT || 3000;
 

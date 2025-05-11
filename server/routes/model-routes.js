@@ -1,0 +1,67 @@
+const express = require("express");
+const router = express.Router();
+const validateToken = require("../middlewares/validate-token");
+const EventModel = require("../models/event-model");
+const { message } = require("antd");
+
+router.post("/create-event", validateToken, async (req, res) => {
+  try {
+    const newEvent = await EventModel.create(req.body);
+    await newEvent.save();
+    res.status(201).json({ message: "event created successfflly", newEvent });
+  } catch (error) {
+    res.status(500).json({ error: "Error creating event" });
+  }
+});
+
+router.put("/edit-event/:id", validateToken, async (req, res) => {
+  try {
+    const updatedEvent = await EventModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "event updated successfully", updatedEvent });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating event" });
+  }
+});
+
+router.delete("/delete-event/:id", validateToken, async (req, res) => {
+  try {
+    const deletedEvent = await EventModel.findByIdAndDelete(req.params.id);
+    if (!deletedEvent) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.status(200).json({ message: "event deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting event" });
+  }
+});
+router.get("/get-events", validateToken, async (req, res) => {
+  try {
+    const events = await EventModel.find();
+    res.status(200).json({ data: events });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching events" });
+  }
+});
+
+router.get("/get-event/:id", validateToken, async (req, res) => {
+  try {
+    const event = await EventModel.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    res.status(200).json({ data: event });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching event" });
+  }
+});
+
+module.exports = router;
