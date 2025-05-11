@@ -20,7 +20,12 @@ function MenuItems({ user }: { user: UserType }) {
       name: "Home",
       icon: <Home size={iconSize} />,
       path: "/",
-      isActive: false,
+      isActive: currentPath === "/",
+    },
+    {
+      name: "Profile",
+      path: "/profile",
+      isActive: currentPath === "/profile",
       icon: <User size={iconSize} />,
     },
     {
