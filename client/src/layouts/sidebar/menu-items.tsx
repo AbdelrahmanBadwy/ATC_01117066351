@@ -7,14 +7,16 @@ import {
   UsersRound,
   User,
 } from "lucide-react";
-import type { UserType } from "../../interfaces";
 import { useLocation, useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
-function MenuItems({ user }: { user: UserType }) {
+import useUserStore from "../../store/user-store";
+import type { UserStoreType } from "../../store/user-store";
+function MenuItems() {
   const iconSize = 20;
   const location = useLocation();
   const navigate = useNavigate();
   const currentPath = location.pathname;
+  const { currentUser }: UserStoreType = useUserStore() as UserStoreType;
   const userMenu = [
     {
       name: "Home",
@@ -84,7 +86,7 @@ function MenuItems({ user }: { user: UserType }) {
       path: "/logout",
     },
   ];
-  const menu = user?.isAdmin ? adminMenu : userMenu;
+  const menu = currentUser?.isAdmin ? adminMenu : userMenu;
 
   const handleLogout = () => {
     Cookie.remove("token");
@@ -98,7 +100,7 @@ function MenuItems({ user }: { user: UserType }) {
           Badawy
           <b className="text-black pl-2">Events</b>
         </h1>
-        <span className="text-sm text-gray-600">{user?.name}</span>
+        <span className="text-sm text-gray-600">{currentUser?.name}</span>
       </div>
       <div className="flex flex-col gap-10 mt-20">
         {menu.map((item: any) => (

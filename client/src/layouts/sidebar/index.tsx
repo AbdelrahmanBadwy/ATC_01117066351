@@ -1,15 +1,14 @@
 import { Menu } from "lucide-react";
-import type { UserType } from "../../interfaces";
 import MenuItems from "./menu-items";
 import { useState } from "react";
 import { Drawer } from "antd";
 
-function Sidebar({ user }: { user: UserType }) {
+function Sidebar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   return (
     <div className="">
       <div className="lg:flex hidden h-full lg:w-full">
-        <MenuItems user={user} />
+        <MenuItems />
       </div>
       <div className="bg-info p-5 lg:hidden flex">
         <Menu
@@ -27,7 +26,7 @@ function Sidebar({ user }: { user: UserType }) {
           open={showMobileMenu}
           width={300}
         >
-          <MenuItems user={user} />
+          <MenuItems />
         </Drawer>
       )}
     </div>
