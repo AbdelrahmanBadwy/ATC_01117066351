@@ -4,13 +4,28 @@ import LocationAndDate from "./location-and-date";
 import Media from "./media";
 import Tickets from "./tickets";
 import { useState } from "react";
+import { Form } from "antd";
+
+export interface EventFormStepProps {
+  eventData: any;
+  setEventData: (data: any) => void;
+  setCurrentStep: (step: number) => void;
+  currentStep: number;
+}
 
 function EventForm() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [eventData, setEventData] = useState({});
+  const commonProps = {
+    eventData,
+    setEventData,
+    setCurrentStep,
+    currentStep,
+  };
   const stepsData = [
     {
       title: "General",
-      content: <General />,
+      content: <General {...commonProps} />,
     },
     {
       title: "Location & Date",
@@ -25,8 +40,9 @@ function EventForm() {
       content: <Tickets />,
     },
   ];
+
   return (
-    <div>
+    <Form layout="vertical" className="w-full">
       <Steps
         current={currentStep}
         size="small"
@@ -41,7 +57,7 @@ function EventForm() {
         ))}
       </Steps>
       <div className="mt-5">{stepsData[currentStep].content}</div>
-    </div>
+    </Form>
   );
 }
 
