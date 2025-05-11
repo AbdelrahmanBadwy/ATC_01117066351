@@ -2,8 +2,6 @@ import { Upload, Button } from "antd";
 import type { EventFormStepProps } from ".";
 
 function Media({
-  eventData,
-  setEventData,
   setCurrentStep,
   currentStep,
   selectedMediaFiles,
