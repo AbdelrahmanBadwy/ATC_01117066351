@@ -29,7 +29,7 @@ function EventForm() {
     },
     {
       title: "Location & Date",
-      content: <LocationAndDate />,
+      content: <LocationAndDate {...commonProps} />,
     },
     {
       title: "Media",

@@ -1,6 +1,7 @@
 import { Form, Input, Button, Tag } from "antd";
 import type { EventFormStepProps } from ".";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function General({
   eventData,
@@ -9,6 +10,7 @@ function General({
   currentStep,
 }: EventFormStepProps) {
   const [guestInputValue, setGuestInputValue] = useState("");
+  const navigate = useNavigate();
 
   const onAddGuest = () => {
     const guests = guestInputValue.split(",");
@@ -90,6 +92,19 @@ function General({
               {guest}
             </Tag>
           ))}
+      </div>
+      <div className="flex gap-10 justify-center">
+        <Button onClick={() => navigate("/admin/events")}>Back</Button>
+        <Button
+          type="primary"
+          onClick={() => setCurrentStep(currentStep + 1)}
+          className="bg-blue-500"
+          disabled={
+            !eventData.name || !eventData.description || !eventData.organizer
+          }
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
