@@ -43,7 +43,7 @@ function EventForm() {
     },
     {
       title: "Tickets",
-      content: <Tickets />,
+      content: <Tickets {...commonProps} />,
     },
   ];
 
