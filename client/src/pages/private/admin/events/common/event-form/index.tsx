@@ -4,7 +4,6 @@ import LocationAndDate from "./location-and-date";
 import Media from "./media";
 import Tickets from "./tickets";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 function EventForm() {
   const [currentStep, setCurrentStep] = useState(0);
