@@ -109,11 +109,6 @@ function EventPage() {
           pageSizeOptions: [5, 10, 20, 50],
         }}
         rowKey={(record: { _id: any }) => record._id}
-        onRow={(record: { _id: any }) => ({
-          onClick: () => {
-            navigate(`/admin/events/${record._id}`);
-          },
-        })}
         scroll={{ x: 768, y: 500 }}
       />
     </div>
