@@ -3,6 +3,8 @@ import PageTitle from "../../../../components/page-title";
 import { Button, message, Table } from "antd";
 import { useEffect, useState } from "react";
 import { getEvents } from "../../../../api-services/events-service";
+import { getDateTimeFormat } from "../../../../helpers/date-time-formate";
+import { Pen, Trash2 } from "lucide-react";
 
 function EventPage() {
   const [events, setEvents] = useState([]);
@@ -25,6 +27,19 @@ function EventPage() {
     }
   };
 
+  const deleteEventHandler = async (id: string) => {
+    try {
+      setLoading(true);
+      // await deleteEvent(id);
+      getData();
+      message.success("Event deleted successfully");
+    } catch (error) {
+      message.error("Failed to delete event");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getData();
   }, []);
@@ -38,7 +53,7 @@ function EventPage() {
       title: "Date & Time",
       dataIndex: "date",
       render: (date: any, row: any) => {
-        return `${date} ${row.time}`;
+        return getDateTimeFormat(`${date} ${row.time}`);
       },
       key: "date",
     },
@@ -50,10 +65,25 @@ function EventPage() {
     {
       title: "Created At",
       dataIndex: "createdAt",
+      render: (date: any) => getDateTimeFormat(date),
     },
     {
       title: "Actions",
       dataIndex: "actions",
+      render: (_text: any, record: any) => (
+        <div className="flex gap-5">
+          <Trash2
+            className="cursor-pointer text-red-700"
+            size={16}
+            onClick={() => deleteEventHandler(record._id)}
+          />
+          <Pen
+            className="cursor-pointer text-yellow-700"
+            size={16}
+            onClick={() => navigate(`/admin/events/edit/${record._id}`)}
+          />
+        </div>
+      ),
     },
   ];
   return (
