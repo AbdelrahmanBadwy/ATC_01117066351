@@ -1,16 +1,88 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PageTitle from "../../../../components/page-title";
-import { Button } from "antd";
+import { Button, message, Table } from "antd";
+import { useEffect, useState } from "react";
+import { getEvents } from "../../../../api-services/events-service";
 
 function EventPage() {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const data = await getEvents();
+      console.log("Events data:", data);
+      setEvents(data.data);
+    } catch (error) {
+      message.error(
+        `Error fetching events: ${
+          error instanceof Error ? error.message : error
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+  const columns = [
+    {
+      title: "Event Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Date & Time",
+      dataIndex: "date",
+      render: (date: any, row: any) => {
+        return `${date} ${row.time}`;
+      },
+      key: "date",
+    },
+    {
+      title: "Organizer",
+      dataIndex: "organizer",
+      key: "organizer",
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+    },
+    {
+      title: "Actions",
+      dataIndex: "actions",
+    },
+  ];
   return (
-    <div className="flex justify-between">
-      <div className="flex items-center">
-        <PageTitle title="Events" />
+    <div>
+      <div className="flex justify-between">
+        <div className="flex items-center">
+          <PageTitle title="Events" />
+        </div>
+        <Link to="/admin/events/create">
+          <Button type="primary">Create Event</Button>
+        </Link>
       </div>
-      <Link to="/admin/events/create">
-        <Button type="primary">Create Event</Button>
-      </Link>
+      <Table
+        columns={columns}
+        dataSource={events}
+        loading={loading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: [5, 10, 20, 50],
+        }}
+        rowKey={(record: { _id: any }) => record._id}
+        onRow={(record: { _id: any }) => ({
+          onClick: () => {
+            navigate(`/admin/events/${record._id}`);
+          },
+        })}
+        scroll={{ x: 768, y: 500 }}
+      />
     </div>
   );
 }

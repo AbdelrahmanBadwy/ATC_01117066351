@@ -24,3 +24,8 @@ html {
 a:hover {
   color: #2970ff !important;
 }
+
+table{
+  margin-top: 20px;
+  border: 1px solid #e8e8e8;
+}
