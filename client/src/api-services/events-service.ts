@@ -15,3 +15,28 @@ export const createEvent = async (eventData: any) => {
     throw error;
   }
 };
+
+export const getEvents = async () => {
+  try {
+    const response = await axios.get("/api/events/get-events", {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    throw error;
+  }
+};
+export const getEventById = async (eventId: string) => {
+  try {
+    const response = await axios.get(`/api/events/get-event/${eventId}`, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    throw error;
+  }
+};
