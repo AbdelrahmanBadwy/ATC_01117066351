@@ -29,6 +29,7 @@ function EventForm() {
 
   const onFinish = async () => {
     try {
+      setLoading(true);
       const [...urls] = await Promise.all(
         selectedMediaFiles.map(async (file) => {
           return await uploadFileToFirebaseAndReturnUrl(file);
@@ -43,6 +44,8 @@ function EventForm() {
       navigate("/admin/events");
     } catch (error: any) {
       message.error("Error creating event", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
