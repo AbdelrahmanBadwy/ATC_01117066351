@@ -1,7 +1,14 @@
 const jwt = require("jsonwebtoken");
+
 const validateToken = (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    const token =
+      req.cookies.token ||
+      (authHeader &&
+        authHeader.startsWith("Bearer ") &&
+        authHeader.split(" ")[1]);
+
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
@@ -10,6 +17,7 @@ const validateToken = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
+    console.error("JWT error:", error.message);
     return res.status(401).json({ message: "Invalid token" });
   }
 };

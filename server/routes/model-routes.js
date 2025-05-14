@@ -2,15 +2,22 @@ const express = require("express");
 const router = express.Router();
 const validateToken = require("../middlewares/validate-token");
 const EventModel = require("../models/event-model");
-const { message } = require("antd");
 
-router.post("/create-event", validateToken, async (req, res) => {
+router.post("/create-event", async (req, res) => {
   try {
+    console.log("Request body:", req.body);
+
+    // Create and save in one step
     const newEvent = await EventModel.create(req.body);
-    await newEvent.save();
-    res.status(201).json({ message: "event created successfflly", newEvent });
+
+    console.log("New event created:", newEvent);
+
+    res.status(201).json({ message: "Event created successfully", newEvent });
   } catch (error) {
-    res.status(500).json({ error: "Error creating event" });
+    console.error("Error creating event:", error);
+    res
+      .status(500)
+      .json({ error: "Error creating event", details: error.message });
   }
 });
 
