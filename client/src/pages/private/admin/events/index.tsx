@@ -2,7 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import PageTitle from "../../../../components/page-title";
 import { Button, message, Table } from "antd";
 import { useEffect, useState } from "react";
-import { getEvents } from "../../../../api-services/events-service";
+import {
+  deleteEvent,
+  getEvents,
+} from "../../../../api-services/events-service";
 import { getDateTimeFormat } from "../../../../helpers/date-time-formate";
 import { Pen, Trash2 } from "lucide-react";
 
@@ -30,7 +33,7 @@ function EventPage() {
   const deleteEventHandler = async (id: string) => {
     try {
       setLoading(true);
-      // await deleteEvent(id);
+      await deleteEvent(id);
       getData();
       message.success("Event deleted successfully");
     } catch (error) {
