@@ -48,6 +48,7 @@ function LocationAndDate({
             setEventData({ ...eventData, date: e.target.value })
           }
           placeholder="Enter event Date"
+          min={new Date().toISOString().split("T")[0]} // disable past dates
         />
       </Form.Item>
       <Form.Item label="Time" required>
