@@ -11,7 +11,8 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    credentials: true,
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   })
@@ -33,7 +34,7 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/users", userRouter);
-app.use("/api/model", modelRouter);
+app.use("/api/events", modelRouter);
 
 const PORT = process.env.PORT || 3000;
 

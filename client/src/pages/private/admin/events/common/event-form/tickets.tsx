@@ -6,6 +6,8 @@ function Tickets({
   currentStep,
   eventData,
   setEventData,
+  loading,
+  onFinish,
 }: EventFormStepProps) {
   const onAddTicketType = () => {
     const existingTicketTypes = eventData?.ticketTypes || [];
@@ -93,8 +95,19 @@ function Tickets({
         </div>
       )}
       <div className="flex gap-10 justify-center col-span-3 mt-5">
-        <Button onClick={() => setCurrentStep(currentStep - 1)}>Back</Button>
-        <Button type="primary" onClick={() => {}} className="bg-blue-500">
+        <Button
+          disabled={loading}
+          onClick={() => setCurrentStep(currentStep - 1)}
+        >
+          Back
+        </Button>
+        <Button
+          type="primary"
+          onClick={onFinish}
+          className="bg-blue-500"
+          loading={loading}
+          disabled={loading}
+        >
           Submit
         </Button>
       </div>

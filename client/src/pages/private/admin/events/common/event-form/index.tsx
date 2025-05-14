@@ -1,10 +1,13 @@
-import { Steps } from "antd";
+import { message, Steps } from "antd";
 import General from "./general";
 import LocationAndDate from "./location-and-date";
 import Media from "./media";
 import Tickets from "./tickets";
 import { useState } from "react";
 import { Form } from "antd";
+import { uploadFileToFirebaseAndReturnUrl } from "../../../../../../api-services/storage-service";
+import { createEvent } from "../../../../../../api-services/events-service";
+import { useNavigate } from "react-router-dom";
 
 export interface EventFormStepProps {
   eventData: any;
@@ -13,12 +16,35 @@ export interface EventFormStepProps {
   currentStep: number;
   selectedMediaFiles?: any;
   setSelectedMediaFiles?: (files: any) => void;
+  loading?: boolean;
+  onFinish?: () => void;
 }
 
 function EventForm() {
   const [currentStep, setCurrentStep] = useState(0);
-  const [eventData, setEventData] = useState({});
+  const [eventData, setEventData] = useState<any>({});
   const [selectedMediaFiles, setSelectedMediaFiles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const onFinish = async () => {
+    try {
+      const [...urls] = await Promise.all(
+        selectedMediaFiles.map(async (file) => {
+          return await uploadFileToFirebaseAndReturnUrl(file);
+        })
+      );
+      const eventDataWithUrls = {
+        ...eventData,
+        mediaFiles: urls,
+      };
+      await createEvent(eventDataWithUrls);
+      message.success("Event created successfully");
+      navigate("/admin/events");
+    } catch (error: any) {
+      message.error("Error creating event", error.message);
+    }
+  };
 
   const commonProps = {
     eventData,
@@ -27,6 +53,9 @@ function EventForm() {
     currentStep,
     selectedMediaFiles,
     setSelectedMediaFiles,
+    loading,
+    setLoading,
+    onFinish,
   };
   const stepsData = [
     {
