@@ -73,23 +73,26 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
           })}
         </div>
 
-        <h1 className="text-sm text-info font-bold mt-10">
-          Select tickets count
-        </h1>
-        <Input
-          type="number"
-          value={selectedTicketsCount}
-          className="w-96"
-          onChange={(e) => setSelectedTicketsCount(parseInt(e.target.value))}
-          min={1}
-          max={maxCount}
-        />
+        <div className="flex flex-col gap-1">
+          <h1 className="text-sm text-info font-bold mt-10">
+            Select tickets count
+          </h1>
 
-        <span className="text-gray-600 text-sm mt-2 font-bold">
-          {selectedTicketsCount > maxCount
-            ? `Only ${maxCount} tickets available`
-            : ""}
-        </span>
+          <Input
+            type="number"
+            value={selectedTicketsCount}
+            className="w-96"
+            onChange={(e) => setSelectedTicketsCount(parseInt(e.target.value))}
+            min={1}
+            max={maxCount}
+          />
+
+          <span className="text-gray-600 text-sm mt-2 font-bold">
+            {selectedTicketsCount > maxCount
+              ? `Only ${maxCount} tickets available`
+              : ""}
+          </span>
+        </div>
 
         <div className="mt-7 flex justify-between bg-gray-200 border border-solid p-3 items-center">
           <h1 className="text-xl text-gray-500 font-bold">
@@ -97,6 +100,9 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
           </h1>
           <Button
             type="primary"
+            onClick={() => {
+              getClientSecretAndOpenPaymentModal();
+            }}
             disabled={
               !selectedTicketType ||
               !selectedTicketsCount ||
@@ -104,14 +110,12 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
               selectedTicketsCount > maxCount
             }
             loading={loading}
-            onClick={() => {
-              getClientSecretAndOpenPaymentModal();
-            }}
           >
             Book Now
           </Button>
         </div>
       </div>
+
       {stripeOptions?.clientSecret && (
         <Elements stripe={stripePromise} options={stripeOptions}>
           {showPaymentModal && (
