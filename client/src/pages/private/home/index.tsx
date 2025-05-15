@@ -6,6 +6,7 @@ import { getEvents } from "../../../api-services/events-service";
 import EventCard from "./common/event-card";
 import type { EventType } from "../../../interfaces";
 import Filters from "./common/filters";
+import Spinner from "../../../components/spinner";
 // import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -36,6 +37,13 @@ function HomePage() {
       date: "",
     });
   }, []);
+  if (loading) {
+    return (
+      <div className="flex h-screen justify-center items-center">
+        <Spinner />
+      </div>
+    );
+  }
   return (
     <div>
       <p className="text-gray-600 text-xl font-bold">
