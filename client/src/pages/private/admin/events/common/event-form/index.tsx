@@ -6,8 +6,11 @@ import Tickets from "./tickets";
 import { useState } from "react";
 import { Form } from "antd";
 import { uploadFileToFirebaseAndReturnUrl } from "../../../../../../api-services/storage-service";
-import { createEvent } from "../../../../../../api-services/events-service";
-import { useNavigate } from "react-router-dom";
+import {
+  createEvent,
+  editEvent,
+} from "../../../../../../api-services/events-service";
+import { useNavigate, useParams } from "react-router-dom";
 
 export interface EventFormStepProps {
   eventData: any;
@@ -20,12 +23,20 @@ export interface EventFormStepProps {
   onFinish?: () => void;
 }
 
-function EventForm() {
+function EventForm({
+  initialData = {},
+  type = "create",
+}: {
+  initialData?: any;
+  type?: "create" | "edit";
+}) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [eventData, setEventData] = useState<any>({});
+  const [eventData, setEventData] = useState<any>(initialData);
   const [selectedMediaFiles, setSelectedMediaFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const params: any = useParams();
 
   const onFinish = async () => {
     try {
@@ -35,12 +46,21 @@ function EventForm() {
           return await uploadFileToFirebaseAndReturnUrl(file);
         })
       );
-      const eventDataWithUrls = {
-        ...eventData,
-        mediaFiles: urls,
-      };
-      await createEvent(eventDataWithUrls);
-      message.success("Event created successfully");
+
+      eventData.media = [...(eventData?.media || []), ...urls];
+
+      if (type === "edit") {
+        if (!params.id) {
+          message.error("Event ID is required for editing");
+          return;
+        }
+        await editEvent(params.id, eventData);
+        message.success("Event updated successfully");
+      } else {
+        await createEvent(eventData);
+        message.success("Event created successfully");
+      }
+
       navigate("/admin/events");
     } catch (error: any) {
       message.error("Error creating event", error.message);

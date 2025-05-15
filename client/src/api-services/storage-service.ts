@@ -1,4 +1,4 @@
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import firebaseApp from "../config/firebase-config";
 
 export const uploadFileToFirebaseAndReturnUrl = async (file: File) => {
@@ -12,5 +12,17 @@ export const uploadFileToFirebaseAndReturnUrl = async (file: File) => {
     return url;
   } catch (error) {
     console.error("Error uploading file:", error);
+  }
+};
+
+export const deleteFileFromFirebase = async (fileUrl: string) => {
+  const storage = getStorage(firebaseApp);
+  const fileRef = ref(storage, fileUrl);
+
+  try {
+    await deleteObject(fileRef);
+    console.log("File deleted successfully");
+  } catch (error) {
+    console.error("Error deleting file:", error);
   }
 };
