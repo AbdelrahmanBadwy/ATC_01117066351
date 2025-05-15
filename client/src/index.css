@@ -19,13 +19,13 @@ html {
   margin-bottom: 0px !important;
 }
 .ant-form-item-label {
-  padding: 3px !important;
+  padding-top: 3px !important;
 }
 a:hover {
   color: #2970ff !important;
 }
 
-table{
+table {
   margin-top: 20px;
   border: 1px solid #e8e8e8;
 }

@@ -16,12 +16,15 @@ export const createEvent = async (eventData: any) => {
   }
 };
 
-export const getEvents = async () => {
+export const getEvents = async (filters: any) => {
   try {
-    const response = await axios.get("/api/events/get-events", {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      `/api/events/get-events?searchText=${filters.searchText}&date=${filters.date}`,
+      {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching events:", error);

@@ -52,7 +52,13 @@ router.delete("/delete-event/:id", validateToken, async (req, res) => {
 });
 router.get("/get-events", validateToken, async (req, res) => {
   try {
-    const events = await EventModel.find().sort({ createdAt: -1 });
+    const searchText = req.query.searchText || "";
+    const date = req.query.date || "";
+
+    const events = await EventModel.find({
+      name: { $regex: new RegExp(searchText, "i") },
+      ...(date && { date }),
+    }).sort({ createdAt: -1 });
     res.status(200).json({ data: events });
   } catch (error) {
     res.status(500).json({ error: "Error fetching events" });
