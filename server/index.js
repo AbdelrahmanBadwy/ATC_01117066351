@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const userRouter = require("./routes/users-routes");
 const eventRouter = require("./routes/event-routes");
 const paymentRouter = require("./routes/payment-routes");
+const bookingRouter = require("./routes/bookings-route");
 const app = express();
 
 app.use(
@@ -37,6 +38,7 @@ app.use(cookieParser());
 app.use("/api/users", userRouter);
 app.use("/api/events", eventRouter);
 app.use("/api/payments", paymentRouter);
+app.use("/api/bookings", bookingRouter);
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");
