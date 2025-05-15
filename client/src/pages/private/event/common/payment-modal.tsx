@@ -8,6 +8,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createBooking } from "../../../../api-services/booking-service";
 
 function PaymentModal({
   showPaymentModal,
@@ -59,7 +60,7 @@ function PaymentModal({
           paymentId: result.paymentIntent.id,
           status: "booked",
         };
-        // await createBooking(bookingPayload);
+        await createBooking(bookingPayload);
         message.success("Booking successful");
         navigate("/profile/bookings");
         setShowPaymentModal(false);
