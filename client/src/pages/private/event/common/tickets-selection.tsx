@@ -1,17 +1,44 @@
 import { useState } from "react";
 import type { EventType } from "../../../../interfaces";
-import { Button, Input } from "antd";
+import { Button, Input, message } from "antd";
+import PaymentModal from "./payment-modal";
+import { Elements } from "@stripe/react-stripe-js";
+import { CheckoutProvider } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { getClientSecret } from "../../../../api-services/payments-service";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 function TicketsSelection({ eventData }: { eventData: EventType }) {
   const [loading, setLoading] = useState(false);
   const [selectedTicketType, setSelectedTicketType] = useState<string>("");
   const [maxCount, setMaxCount] = useState<number>(1);
   const [selectedTicketsCount, setSelectedTicketsCount] = useState<number>(1);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [stripeOptions, setStripeOptions] = useState<any>({});
+
   const ticketTypes = eventData.ticketTypes;
   const selectedTicketPrice = ticketTypes.find(
     (ticketType) => ticketType.name === selectedTicketType
   )?.price;
   const totalAmount = (selectedTicketPrice || 0) * selectedTicketsCount;
+
+  const getClientSecretAndOpenPaymentModal = async () => {
+    try {
+      setLoading(true);
+      const response = await getClientSecret(totalAmount);
+      setStripeOptions({
+        clientSecret: response,
+      });
+      console.log(response);
+      setShowPaymentModal(true);
+    } catch (error: any) {
+      message.error("Error fetching client secret:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -78,11 +105,28 @@ function TicketsSelection({ eventData }: { eventData: EventType }) {
               selectedTicketsCount > maxCount
             }
             loading={loading}
+            onClick={() => {
+              getClientSecretAndOpenPaymentModal();
+            }}
           >
             Book Now
           </Button>
         </div>
       </div>
+      {stripeOptions?.clientSecret && (
+        <Elements stripe={stripePromise} options={stripeOptions}>
+          {showPaymentModal && (
+            <PaymentModal
+            // showPaymentModal={showPaymentModal}
+            // setShowPaymentModal={setShowPaymentModal}
+            // selectedTicketType={selectedTicketType}
+            // selectedTicketsCount={selectedTicketsCount}
+            // totalAmount={totalAmount}
+            // event={eventData}
+            />
+          )}
+        </Elements>
+      )}
     </div>
   );
 }

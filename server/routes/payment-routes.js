@@ -1,7 +1,7 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const express = require("express");
 const router = express.Router();
-const validateToken = require("../middleware/validateToken");
+const validateToken = require("../middlewares/validate-token");
 
 // Create a new payment intent
 router.post("/create-payment-intent", validateToken, async (req, res) => {
@@ -20,3 +20,5 @@ router.post("/create-payment-intent", validateToken, async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+module.exports = router;
