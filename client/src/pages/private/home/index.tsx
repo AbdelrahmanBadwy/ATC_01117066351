@@ -17,10 +17,10 @@ function HomePage() {
   });
   const { currentUser } = useUserStore() as UserStoreType;
 
-  const getData = async () => {
+  const getData = async (filtersObj: { searchText: string; date: string }) => {
     try {
       setLoading(true);
-      const response = await getEvents();
+      const response = await getEvents(filtersObj);
       console.log("Response:", response);
       setEvents(response.data);
     } catch (error: any) {
@@ -31,11 +31,16 @@ function HomePage() {
   };
 
   useEffect(() => {
-    getData();
+    getData({
+      searchText: "",
+      date: "",
+    });
   }, []);
   return (
     <div>
-      <p>Welcome, {currentUser?.name}!</p>
+      <p className="text-gray-600 text-xl font-bold">
+        Welcome, {currentUser?.name}!!!
+      </p>
 
       <Filters filters={filters} setFilters={setFilters} onFilter={getData} />
       <div className="flex flex-col gap-7 mt-7">
