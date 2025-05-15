@@ -47,7 +47,7 @@ function EventForm({
         })
       );
 
-      eventData.media = [...eventData.media, ...urls];
+      eventData.media = [...(eventData?.media || []), ...urls];
 
       if (type === "edit") {
         if (!params.id) {

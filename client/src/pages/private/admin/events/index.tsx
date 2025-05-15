@@ -8,9 +8,10 @@ import {
 } from "../../../../api-services/events-service";
 import { getDateTimeFormat } from "../../../../helpers/date-time-formate";
 import { Pen, Trash2 } from "lucide-react";
+import { deleteFileFromFirebase } from "../../../../api-services/storage-service";
 
 function EventPage() {
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<{ _id: string; media?: string[] }[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const getData = async () => {
@@ -33,6 +34,14 @@ function EventPage() {
   const deleteEventHandler = async (id: string) => {
     try {
       setLoading(true);
+      const event = events.find((event: any) => event._id === id);
+      if (event?.media) {
+        await Promise.all(
+          event.media.map(async (file: string) => {
+            await deleteFileFromFirebase(file);
+          })
+        );
+      }
       await deleteEvent(id);
       getData();
       message.success("Event deleted successfully");
@@ -46,6 +55,7 @@ function EventPage() {
   useEffect(() => {
     getData();
   }, []);
+
   const columns = [
     {
       title: "Event Name",
