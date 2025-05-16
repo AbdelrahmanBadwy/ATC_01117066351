@@ -4,6 +4,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validateToken = require("../middlewares/validate-token");
+const { console } = require("inspector");
 //user registration
 
 router.post("/register", async (req, res) => {
@@ -90,6 +91,20 @@ router.get("/get-all-users", validateToken, async (req, res) => {
       .json({ data: users, message: "Users fetched successfully" });
   } catch (error) {
     res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
+// update user
+router.put("/update-user", validateToken, async (req, res) => {
+  try {
+    console.log(req.body);
+    await User.findByIdAndUpdate(req.body.userId, req.body);
+    console.log(req.body);
+    return res
+      .status(200)
+      .json({ data: user, message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating user" });
   }
 });
 

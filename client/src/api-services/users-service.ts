@@ -43,3 +43,13 @@ export const getAllUsers = async () => {
     throw error;
   }
 };
+
+export const updateUserData = async (data: any) => {
+  try {
+    const response = await axios.put("/api/users/update-user", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user data:", error);
+    throw error;
+  }
+};
