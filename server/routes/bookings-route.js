@@ -3,11 +3,12 @@ const router = express.Router();
 const BookingModel = require("../models/booking-model");
 const validateToken = require("../middlewares/validate-token");
 const EventModel = require("../models/event-model");
+const e = require("express");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 router.post("/create-booking", validateToken, async (req, res) => {
   try {
     req.body.user = req.user._id;
-    const booking = await BookingModel.create(req.body);
     const event = await EventModel.findById(req.body.event);
     const ticketTypes = event.ticketTypes;
 
@@ -33,6 +34,64 @@ router.post("/create-booking", validateToken, async (req, res) => {
   } catch (error) {
     console.error("Error creating booking:", error);
     res.status(500).json({ error: "Error creating booking" });
+  }
+});
+
+router.get("/get-user-bookings", validateToken, async (req, res) => {
+  try {
+    console.log("Fetching user bookings for user:", req.user.id);
+    let userId = req.user._id;
+    const bookings = await BookingModel.find({ user: userId })
+      .populate("event")
+      .sort({ createdAt: -1 })
+      .catch((err) => {
+        console.error("Error fetching bookings from database:", err);
+        throw new Error("Database query failed");
+      });
+    res.status(200).json({ data: bookings });
+  } catch (error) {
+    console.error("Error fetching user bookings:", error);
+    res.status(500).json({ error: "Error fetching user bookings" });
+  }
+});
+
+router.post("/cancel-booking", validateToken, async (req, res) => {
+  try {
+    const { eventId, paymentId, bookingId, ticketsCount, ticketTypeName } =
+      req.body;
+    const refund = await stripe.refunds.create({
+      payment_intent: paymentId,
+    });
+    if (refund.status === "succeeded") {
+      await BookingModel.findByIdAndUpdate(bookingId, {
+        status: "cancelled",
+      });
+      const event = await EventModel.findById(eventId);
+      const ticketTypes = event.ticketTypes;
+
+      const updatedTicketTypes = ticketTypes.map((ticketType) => {
+        if (ticketType.name === ticketTypeName) {
+          ticketType.booked =
+            Number(ticketType.booked ?? 0) - Number(ticketsCount);
+
+          ticketType.available =
+            Number(ticketType.available ?? ticketType.limit) +
+            Number(ticketsCount);
+        }
+        return ticketType;
+      });
+      await EventModel.findByIdAndUpdate(
+        eventId,
+        { ticketTypes: updatedTicketTypes },
+        { new: true }
+      );
+      res.status(200).json({ message: "Booking cancelled successfully" });
+    } else {
+      return res.status(400).json({ error: "Refund failed" });
+    }
+  } catch (error) {
+    console.error("Error cancelling booking:", error);
+    res.status(500).json({ error: "Error cancelling booking" });
   }
 });
 

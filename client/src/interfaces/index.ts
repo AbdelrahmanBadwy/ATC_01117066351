@@ -25,3 +25,16 @@ export interface EventType {
     available: number;
   }[];
 }
+
+export interface BookingType {
+  _id: string;
+  user: UserType;
+  event: EventType;
+  ticketType: string;
+  ticketsCount: number;
+  quantity: number;
+  totalAmount: number;
+  paymentId?: string;
+  status?: string;
+  createdAt: string;
+}

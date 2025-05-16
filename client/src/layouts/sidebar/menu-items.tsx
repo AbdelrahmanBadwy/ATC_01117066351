@@ -33,13 +33,13 @@ function MenuItems() {
     {
       name: "Bookings",
       icon: <List size={iconSize} />,
-      path: "/bookings",
+      path: "/profile/bookings",
       isActive: currentPath === "/bookings",
     },
     {
       name: "Reports",
       icon: <CandlestickChart size={iconSize} />,
-      path: "/reports",
+      path: "/profile/reports",
       isActive: currentPath === "/reports",
     },
     {
