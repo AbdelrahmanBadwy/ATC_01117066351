@@ -95,4 +95,21 @@ router.post("/cancel-booking", validateToken, async (req, res) => {
   }
 });
 
+router.get("/get-all-bookings", validateToken, async (req, res) => {
+  try {
+    const bookings = await BookingModel.find()
+      .populate("event")
+      .populate("user")
+      .sort({ createdAt: -1 })
+      .catch((err) => {
+        console.error("Error fetching bookings from database:", err);
+        throw new Error("Database query failed");
+      });
+    res.status(200).json({ data: bookings });
+  } catch (error) {
+    console.error("Error fetching all bookings:", error);
+    res.status(500).json({ error: "Error fetching all bookings" });
+  }
+});
+
 module.exports = router;

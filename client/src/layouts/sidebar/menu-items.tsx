@@ -34,13 +34,13 @@ function MenuItems() {
       name: "Bookings",
       icon: <List size={iconSize} />,
       path: "/profile/bookings",
-      isActive: currentPath === "/bookings",
+      isActive: currentPath === "/profile/bookings",
     },
     {
       name: "Reports",
       icon: <CandlestickChart size={iconSize} />,
       path: "/profile/reports",
-      isActive: currentPath === "/reports",
+      isActive: currentPath === "/profile/reports",
     },
     {
       name: "Logout",
