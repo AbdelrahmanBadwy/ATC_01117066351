@@ -39,9 +39,15 @@ router.post("/create-booking", validateToken, async (req, res) => {
 
 router.get("/get-user-bookings", validateToken, async (req, res) => {
   try {
-    const bookings = await BookingModel.find({ user: req.user._id })
+    console.log("Fetching user bookings for user:", req.user.id);
+    let userId = req.user._id;
+    const bookings = await BookingModel.find({ user: userId })
       .populate("event")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .catch((err) => {
+        console.error("Error fetching bookings from database:", err);
+        throw new Error("Database query failed");
+      });
     res.status(200).json({ data: bookings });
   } catch (error) {
     console.error("Error fetching user bookings:", error);
