@@ -12,3 +12,13 @@ export const createBooking = async (bookingData: any) => {
     throw error;
   }
 };
+
+export const getUserBookings = async (userId: string) => {
+  try {
+    const response = await axios.get("/api/bookings/get-user-bookings/");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user bookings:", error);
+    throw error;
+  }
+};
