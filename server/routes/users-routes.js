@@ -78,4 +78,19 @@ router.get("/current-user", validateToken, async (req, res) => {
   }
 });
 
+// get all users
+router.get("/get-all-users", validateToken, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    if (!users) {
+      return res.status(404).json({ message: "No users found" });
+    }
+    return res
+      .status(200)
+      .json({ data: users, message: "Users fetched successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching users" });
+  }
+});
+
 module.exports = router;
