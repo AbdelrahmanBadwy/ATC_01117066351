@@ -81,7 +81,7 @@ function UserBookingsPage() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => status.toUpperCase(),
+      render: (status: string) => status?.toUpperCase(),
     },
     {
       title: "Booked On",

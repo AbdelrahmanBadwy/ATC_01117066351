@@ -3,12 +3,18 @@ const router = express.Router();
 const BookingModel = require("../models/booking-model");
 const validateToken = require("../middlewares/validate-token");
 const EventModel = require("../models/event-model");
+const UserModel = require("../models/user-model");
+const sendEmail = require("../helpers/send-email");
 const e = require("express");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 router.post("/create-booking", validateToken, async (req, res) => {
   try {
-    req.body.user = req.user._id;
+    req.body.user = req.user.id;
+    console.log("Creating booking for user:", req.body.user);
+    console.log("Booking details:", req.body);
+    const booking = await BookingModel.create(req.body);
+
     const event = await EventModel.findById(req.body.event);
     const ticketTypes = event.ticketTypes;
 
@@ -28,9 +34,24 @@ router.post("/create-booking", validateToken, async (req, res) => {
       { ticketTypes: updatedTicketTypes },
       { new: true }
     );
+    const userObj = await UserModel.findById(req.body.user);
+    // send confirmation email
+    const emailPayload = {
+      email: userObj.email,
+      subject: "Booking Confirmation",
+      text: `Your booking for ${event.name} has been confirmed.`,
+      html: `<h1>Your booking for ${event.name} has been confirmed.</h1>
+             <p>Booking ID: ${booking._id}</p>
+             <p>Event: ${event.name}</p>
+             <p>Date: ${event.date}</p>
+             <p>Time: ${event.time}</p>
+             <p>Tickets Count: ${req.body.ticketsCount}</p>
+             <p>Ticket Type: ${req.body.ticketType}</p>`,
+    };
+    await sendEmail(emailPayload);
     res
       .status(201)
-      .json({ message: "Booking created successfully", newBooking });
+      .json({ message: "Booking created successfully", data: booking });
   } catch (error) {
     console.error("Error creating booking:", error);
     res.status(500).json({ error: "Error creating booking" });
@@ -40,7 +61,9 @@ router.post("/create-booking", validateToken, async (req, res) => {
 router.get("/get-user-bookings", validateToken, async (req, res) => {
   try {
     console.log("Fetching user bookings for user:", req.user.id);
-    let userId = req.user._id;
+    console.log("Fetching user bookings for user:", req.user._id);
+
+    let userId = req.user.id;
     const bookings = await BookingModel.find({ user: userId })
       .populate("event")
       .sort({ createdAt: -1 })
@@ -85,6 +108,23 @@ router.post("/cancel-booking", validateToken, async (req, res) => {
         { ticketTypes: updatedTicketTypes },
         { new: true }
       );
+      const userObj = await UserModel.findById(req.user.id);
+      // send cancellation email
+      const emailPayload = {
+        email: userObj.email,
+        subject: "Booking Cancellation",
+        text: `Your booking for ${event.name} has been cancelled.`,
+        html: `<h1>Your booking for ${event.name} has been cancelled.</h1>
+               <p>Booking ID: ${bookingId}</p>
+               <p>Event: ${event.name}</p>
+               <p>Date: ${event.date}</p>
+               <p>Time: ${event.time}</p>
+               <p>Tickets Count: ${ticketsCount}</p>
+               <p>Ticket Type: ${ticketTypeName}</p>`,
+      };
+      await sendEmail(emailPayload);
+      console.log("Cancellation email sent to:", userObj.email);
+      console.log("Booking cancelled successfully:", bookingId);
       res.status(200).json({ message: "Booking cancelled successfully" });
     } else {
       return res.status(400).json({ error: "Refund failed" });
