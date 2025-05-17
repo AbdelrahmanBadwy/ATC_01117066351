@@ -14,6 +14,7 @@ import UserBookingPage from "./pages/private/profile/bookings";
 import UsersPage from "./pages/private/admin/users";
 import AdminBookingsPage from "./pages/private/admin/bookings";
 import AdminReports from "./pages/private/admin/reports";
+import UserReports from "./pages/private/profile/reports";
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
             element={
               <PrivateLayout>
                 <UserBookingPage />
+              </PrivateLayout>
+            }
+          />
+          <Route
+            path="/profile/reports"
+            element={
+              <PrivateLayout>
+                <UserReports />
               </PrivateLayout>
             }
           />

@@ -115,7 +115,7 @@ function AdminReports() {
         />
       </div>
 
-      {reports.ticketTypesAndThierSales && (
+      {reports.ticketTypesAndTheirSales && (
         <div className="mt-7 flex flex-col gap-5">
           <h1 className="text-info text-sm font-bold col-span-4">
             Ticket Sales by Event
@@ -123,7 +123,7 @@ function AdminReports() {
 
           <Table
             columns={ticketTypesColumns}
-            dataSource={reports.ticketTypesAndThierSales}
+            dataSource={reports.ticketTypesAndTheirSales}
           />
         </div>
       )}
