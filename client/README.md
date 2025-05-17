@@ -56,6 +56,18 @@ VITE_FIREBASE_API_KEY=your_firebase_api_key
 # Add other variables as needed
 ```
 
+## Users to test
+
+### admin user
+
+email: test@test.test
+pass: asdasd
+
+### normal user
+
+email: test2@test2.test2
+pass: asdasd
+
 > **Note:** Prefix all environment variables with `VITE_` to make them accessible in the frontend code.
 
 ## Troubleshooting
