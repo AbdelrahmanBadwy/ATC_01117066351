@@ -2,6 +2,8 @@
 
 This is the frontend for the project, built with React, TypeScript, Vite, and Tailwind CSS.
 
+https://badawy-events-mern-cl-git-28caad-abdelrahman-elbadawys-projects.vercel.app
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18 or higher recommended)
