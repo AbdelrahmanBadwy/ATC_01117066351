@@ -13,6 +13,8 @@ import EventInfoPage from "./pages/private/event";
 import UserBookingPage from "./pages/private/profile/bookings";
 import UsersPage from "./pages/private/admin/users";
 import AdminBookingsPage from "./pages/private/admin/bookings";
+import AdminReports from "./pages/private/admin/reports";
+import UserReports from "./pages/private/profile/reports";
 
 function App() {
   return (
@@ -68,6 +70,14 @@ function App() {
             }
           />
           <Route
+            path="/profile/reports"
+            element={
+              <PrivateLayout>
+                <UserReports />
+              </PrivateLayout>
+            }
+          />
+          <Route
             path="/admin/events"
             element={
               <PrivateLayout>
@@ -105,6 +115,14 @@ function App() {
             element={
               <PrivateLayout>
                 <UsersPage />
+              </PrivateLayout>
+            }
+          />
+          <Route
+            path="/admin/reports"
+            element={
+              <PrivateLayout>
+                <AdminReports />
               </PrivateLayout>
             }
           />
