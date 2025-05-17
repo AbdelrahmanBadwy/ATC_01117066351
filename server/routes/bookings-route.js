@@ -3,6 +3,8 @@ const router = express.Router();
 const BookingModel = require("../models/booking-model");
 const validateToken = require("../middlewares/validate-token");
 const EventModel = require("../models/event-model");
+const UserModel = require("../models/user-model");
+const sendEmail = require("../helpers/send-email");
 const e = require("express");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -32,6 +34,21 @@ router.post("/create-booking", validateToken, async (req, res) => {
       { ticketTypes: updatedTicketTypes },
       { new: true }
     );
+    const userObj = await UserModel.findById(req.body.user);
+    // send confirmation email
+    const emailPayload = {
+      email: userObj.email,
+      subject: "Booking Confirmation",
+      text: `Your booking for ${event.name} has been confirmed.`,
+      html: `<h1>Your booking for ${event.name} has been confirmed.</h1>
+             <p>Booking ID: ${booking._id}</p>
+             <p>Event: ${event.name}</p>
+             <p>Date: ${event.date}</p>
+             <p>Time: ${event.time}</p>
+             <p>Tickets Count: ${req.body.ticketsCount}</p>
+             <p>Ticket Type: ${req.body.ticketType}</p>`,
+    };
+    await sendEmail(emailPayload);
     res
       .status(201)
       .json({ message: "Booking created successfully", data: booking });
