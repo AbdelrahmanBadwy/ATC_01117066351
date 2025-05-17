@@ -108,6 +108,23 @@ router.post("/cancel-booking", validateToken, async (req, res) => {
         { ticketTypes: updatedTicketTypes },
         { new: true }
       );
+      const userObj = await UserModel.findById(req.user.id);
+      // send cancellation email
+      const emailPayload = {
+        email: userObj.email,
+        subject: "Booking Cancellation",
+        text: `Your booking for ${event.name} has been cancelled.`,
+        html: `<h1>Your booking for ${event.name} has been cancelled.</h1>
+               <p>Booking ID: ${bookingId}</p>
+               <p>Event: ${event.name}</p>
+               <p>Date: ${event.date}</p>
+               <p>Time: ${event.time}</p>
+               <p>Tickets Count: ${ticketsCount}</p>
+               <p>Ticket Type: ${ticketTypeName}</p>`,
+      };
+      await sendEmail(emailPayload);
+      console.log("Cancellation email sent to:", userObj.email);
+      console.log("Booking cancelled successfully:", bookingId);
       res.status(200).json({ message: "Booking cancelled successfully" });
     } else {
       return res.status(400).json({ error: "Refund failed" });
