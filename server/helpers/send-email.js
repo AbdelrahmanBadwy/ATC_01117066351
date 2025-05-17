@@ -33,3 +33,4 @@ const sendEmail = async ({ email, subject, text, html }) => {
 };
 
 module.exports = sendEmail;
+// AbdelRahman.Fawzi.AbdelAzim@h-eng.helwan.edu.eg

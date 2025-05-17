@@ -8,7 +8,11 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 router.post("/create-booking", validateToken, async (req, res) => {
   try {
-    req.body.user = req.user._id;
+    req.body.user = req.user.id;
+    console.log("Creating booking for user:", req.body.user);
+    console.log("Booking details:", req.body);
+    const booking = await BookingModel.create(req.body);
+
     const event = await EventModel.findById(req.body.event);
     const ticketTypes = event.ticketTypes;
 
@@ -30,7 +34,7 @@ router.post("/create-booking", validateToken, async (req, res) => {
     );
     res
       .status(201)
-      .json({ message: "Booking created successfully", newBooking });
+      .json({ message: "Booking created successfully", data: booking });
   } catch (error) {
     console.error("Error creating booking:", error);
     res.status(500).json({ error: "Error creating booking" });
@@ -40,7 +44,9 @@ router.post("/create-booking", validateToken, async (req, res) => {
 router.get("/get-user-bookings", validateToken, async (req, res) => {
   try {
     console.log("Fetching user bookings for user:", req.user.id);
-    let userId = req.user._id;
+    console.log("Fetching user bookings for user:", req.user._id);
+
+    let userId = req.user.id;
     const bookings = await BookingModel.find({ user: userId })
       .populate("event")
       .sort({ createdAt: -1 })
